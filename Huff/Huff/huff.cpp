@@ -12,7 +12,7 @@ void AppendFileExtension(string & str, string const suffix);
 // Function taken from: https://stackoverflow.com/questions/6417817/easy-way-to-remove-extension-from-a-filename
 string RemoveFileExtension(const string& filename);
 struct HuffTableEntry {
-	// TODO: Insert a field in the struct to represent glyphs.
+	char glyph;
 	int left; 
 	int right;
 	int frequency;
