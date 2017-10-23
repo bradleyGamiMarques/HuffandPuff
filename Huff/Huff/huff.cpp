@@ -1,18 +1,24 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 using std::cin;
 using std::cout;
 using std::ifstream;
 using std::ios;
 using std::string;
+using std::vector;
+
 // Functions taken from: https://stackoverflow.com/questions/25706991/appending-a-file-extension-in-a-c-progam
 bool EndsWith(string const &, string const);
 void AppendFileExtension(string & str, string const suffix);
+
 // Function taken from: https://stackoverflow.com/questions/6417817/easy-way-to-remove-extension-from-a-filename
 string RemoveFileExtension(const string& filename);
+
+void BubbleSort(int, HuffTableEntry[]);
 struct HuffTableEntry {
-	char glyph;
+	int glyph;
 	int left; 
 	int right;
 	int frequency;
@@ -63,3 +69,23 @@ inline string RemoveFileExtension(const string & filename)
 	}
 	return filename.substr(0, last_dot);
 }
+
+void BubbleSort(int n, HuffTableEntry huff_table[])
+{
+	bool did_swap = true;
+	int num_pairs = n;
+	HuffTableEntry temp;
+	while (did_swap) {
+		num_pairs--;
+		did_swap = false;
+		for (int index = 0; index < num_pairs; index++) {
+			if (huff_table[index].frequency < huff_table[index + 1].frequency) {
+				temp = huff_table[index];
+				huff_table[index] = huff_table[index + 1];
+				huff_table[index + 1] = temp;
+				did_swap = true;
+			}
+		}
+	}
+}
+
