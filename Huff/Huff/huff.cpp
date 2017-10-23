@@ -1,11 +1,13 @@
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 using std::cin;
 using std::cout;
 using std::ifstream;
 using std::ios;
+using std::map;
 using std::string;
 using std::vector;
 
@@ -24,12 +26,26 @@ struct HuffTableEntry {
 	int frequency;
 };
 void main() {
+	int length_of_file_name;
 	string input_file_name;
+	string output_file_name;
 	cout << "Please enter a file name: ";
 	getline(cin, input_file_name);
+	output_file_name = input_file_name;
+	length_of_file_name = input_file_name.length();
 	ifstream fin(input_file_name, ios::binary);
 	// Coach said that we can assume that the file exists. For that reason I
 	// haven't written the code to check if the file does not exist.
+	AppendFileExtension(output_file_name, ".huf");
+
+
+	/// TODO: Create a frequency table
+	// char is glyph and int is the frequency
+	map<char, int> frequency_table;
+	char buffer[8192];
+	// MAYBE fin.read(buffer,);
+	/// TODO: Do the sorting stuff, and get the huffman table
+	/// TODO: Write all the header stuff to the file, and encode the data.
 }
 inline bool EndsWith(string const & str, string const file_extension) {
 	bool flag = false;
