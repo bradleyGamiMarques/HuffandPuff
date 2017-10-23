@@ -5,9 +5,11 @@
 #include <vector>
 using std::cin;
 using std::cout;
+using std::endl;
 using std::ifstream;
 using std::ios;
 using std::map;
+using std::pair;
 using std::string;
 using std::vector;
 
@@ -17,14 +19,13 @@ void AppendFileExtension(string & str, string const suffix);
 
 // Function taken from: https://stackoverflow.com/questions/6417817/easy-way-to-remove-extension-from-a-filename
 string RemoveFileExtension(const string& filename);
-
-void BubbleSort(int, HuffTableEntry[]);
 struct HuffTableEntry {
 	int glyph;
-	int left; 
+	int left;
 	int right;
 	int frequency;
 };
+void BubbleSort(int, HuffTableEntry[]);
 void main() {
 	int length_of_file_name;
 	string input_file_name;
@@ -34,17 +35,46 @@ void main() {
 	output_file_name = input_file_name;
 	length_of_file_name = input_file_name.length();
 	ifstream fin(input_file_name, ios::binary);
-	// Coach said that we can assume that the file exists. For that reason I
-	// haven't written the code to check if the file does not exist.
+	// Coach said that we can assume that the file exists. For that reason
+	// I haven't written the code to check if the file does not exist.
 	AppendFileExtension(output_file_name, ".huf");
 
 
 	/// TODO: Create a frequency table
 	// char is glyph and int is the frequency
 	map<char, int> frequency_table;
-	char buffer[8192];
-	// MAYBE fin.read(buffer,);
+	string input;
+	getline(fin, input);
+	for(char c: input) {
+		auto iter = frequency_table.find(c);
+		if (iter == frequency_table.end()) {
+			// Didn't find the char in the map so we need to insert it into the map.
+			frequency_table.insert(pair<char, int>(c,1));
+		}
+		else {
+			// We found it so increment it in the map frequency_table
+			frequency_table[c]++;
+		}
+	}
+	
 	/// TODO: Do the sorting stuff, and get the huffman table
+	HuffTableEntry huff_table[513];
+	int index = 0;
+	for (map<char, int>::iterator iter = frequency_table.begin(); iter != frequency_table.end(); ++iter) {
+		huff_table[index].glyph = iter->first;
+		huff_table[index].left = -1;
+		huff_table[index].right = -1;
+		huff_table[index].frequency = iter->second;
+		index++;
+	}
+	// Add in the end of file character.
+	huff_table[index].glyph = 256;
+	huff_table[index].left = -1;
+	huff_table[index].right = -1;
+	huff_table[index].frequency = 1;
+	
+	int F, H, M;
+	BubbleSort(index + 1, huff_table);
 	/// TODO: Write all the header stuff to the file, and encode the data.
 }
 inline bool EndsWith(string const & str, string const file_extension) {
@@ -95,7 +125,7 @@ void BubbleSort(int n, HuffTableEntry huff_table[])
 		num_pairs--;
 		did_swap = false;
 		for (int index = 0; index < num_pairs; index++) {
-			if (huff_table[index].frequency < huff_table[index + 1].frequency) {
+			if (huff_table[index].frequency > huff_table[index + 1].frequency) {
 				temp = huff_table[index];
 				huff_table[index] = huff_table[index + 1];
 				huff_table[index + 1] = temp;
