@@ -26,6 +26,9 @@ struct HuffTableEntry {
 	int frequency;
 };
 void BubbleSort(int, HuffTableEntry[]);
+void CreateHuffmanTable(HuffTableEntry[], int);
+int MarkM(HuffTableEntry[], const int, const int);
+
 void main() {
 	int length_of_file_name;
 	string input_file_name;
@@ -41,40 +44,40 @@ void main() {
 
 
 	/// TODO: Create a frequency table
-	// char is glyph and int is the frequency
-	map<char, int> frequency_table;
+	// type char is the glyph and type int is the frequency of the glyph.
+	map<char, int> frequency_map;
 	string input;
 	getline(fin, input);
 	for(char c: input) {
-		auto iter = frequency_table.find(c);
-		if (iter == frequency_table.end()) {
+		auto iter = frequency_map.find(c);
+		if (iter == frequency_map.end()) {
 			// Didn't find the char in the map so we need to insert it into the map.
-			frequency_table.insert(pair<char, int>(c,1));
+			frequency_map.insert(pair<char, int>(c,1));
 		}
 		else {
 			// We found it so increment it in the map frequency_table
-			frequency_table[c]++;
+			frequency_map[c]++;
 		}
 	}
 	
 	/// TODO: Do the sorting stuff, and get the huffman table
-	HuffTableEntry huff_table[513];
+	HuffTableEntry frequency_table[513];
 	int index = 0;
-	for (map<char, int>::iterator iter = frequency_table.begin(); iter != frequency_table.end(); ++iter) {
-		huff_table[index].glyph = iter->first;
-		huff_table[index].left = -1;
-		huff_table[index].right = -1;
-		huff_table[index].frequency = iter->second;
+	for (map<char, int>::iterator iter = frequency_map.begin(); iter != frequency_map.end(); ++iter) {
+		frequency_table[index].glyph = iter->first;
+		frequency_table[index].left = -1;
+		frequency_table[index].right = -1;
+		frequency_table[index].frequency = iter->second;
 		index++;
 	}
 	// Add in the end of file character.
-	huff_table[index].glyph = 256;
-	huff_table[index].left = -1;
-	huff_table[index].right = -1;
-	huff_table[index].frequency = 1;
-	
-	int F, H, M;
-	BubbleSort(index + 1, huff_table);
+	frequency_table[index].glyph = 256;
+	frequency_table[index].left = -1;
+	frequency_table[index].right = -1;
+	frequency_table[index].frequency = 1;
+
+	// Sort the frequency table.
+	BubbleSort(index + 1, frequency_table);
 	/// TODO: Write all the header stuff to the file, and encode the data.
 }
 inline bool EndsWith(string const & str, string const file_extension) {
@@ -132,6 +135,47 @@ void BubbleSort(int n, HuffTableEntry huff_table[])
 				did_swap = true;
 			}
 		}
+	}
+}
+
+void CreateHuffmanTable(HuffTableEntry frequency_table[], int length)
+{
+	int h = length - 1;
+	int f = length;
+	int m;
+	do {
+		// Mark m.
+		if (h >= 2) {
+			m = MarkM(frequency_table, 1, 2);
+		}
+		else if (h >= 1) {
+			m = 1; // If we've reached this point always choose the left.
+		}
+		// Move frequency_table[m] to frequency_table[f].
+		frequency_table[m] = frequency_table[f];
+		// Move frequency_table[h] to frequency_table[m].
+		frequency_table[h] = frequency_table[m];
+		// Reheap?
+
+		// Move frequency_table[0] to frequency_table[h].
+		frequency_table[h] = frequency_table[0];
+		// Create a merge frequency node at frequency_table[0].
+
+		// Reheap?
+
+		// Move H left and F right.
+		h--;
+		f++;
+	} while (f != 2 * length - 1);
+}
+
+inline int MarkM(HuffTableEntry table[], const int slot_one, const int slot_two)
+{
+	if (table[slot_one].frequency <= table[slot_two].frequency) {
+		return slot_one;
+	}
+	else {
+		return slot_two;
 	}
 }
 
