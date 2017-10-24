@@ -25,9 +25,16 @@ struct HuffTableEntry {
 	int right;
 	int frequency;
 };
+struct StoredHuffTableEntry {
+	int glyph;
+	int left;
+	int right;
+};
+
 void BubbleSort(int, HuffTableEntry[]);
 void CreateHuffmanTable(HuffTableEntry[], int);
 int MarkM(HuffTableEntry[], const int, const int);
+void Reheap(HuffTableEntry[], int);
 
 void main() {
 	int length_of_file_name;
@@ -75,9 +82,13 @@ void main() {
 	frequency_table[index].left = -1;
 	frequency_table[index].right = -1;
 	frequency_table[index].frequency = 1;
-
+	int length = index + 1;
 	// Sort the frequency table.
-	BubbleSort(index + 1, frequency_table);
+	BubbleSort(length, frequency_table);
+
+	//create the huffmantable
+	CreateHuffmanTable(frequency_table, length);
+
 	/// TODO: Write all the header stuff to the file, and encode the data.
 }
 inline bool EndsWith(string const & str, string const file_extension) {
@@ -152,17 +163,35 @@ void CreateHuffmanTable(HuffTableEntry frequency_table[], int length)
 			m = 1; // If we've reached this point always choose the left.
 		}
 		// Move frequency_table[m] to frequency_table[f].
-		frequency_table[m] = frequency_table[f];
+		frequency_table[f] = frequency_table[m];
 		// Move frequency_table[h] to frequency_table[m].
-		frequency_table[h] = frequency_table[m];
+		frequency_table[m] = frequency_table[h];
+
+		for (int i = 0; i <= f; i++) {
+			cout << frequency_table[i].frequency << endl;
+		}
+
 		// Reheap?
+		Reheap(frequency_table, h);
+		cout << "Reheaped...1" << endl;
+		for (int i = 0; i <= f; i++) {
+			cout << frequency_table[i].frequency << endl;
+		}
 
 		// Move frequency_table[0] to frequency_table[h].
 		frequency_table[h] = frequency_table[0];
 		// Create a merge frequency node at frequency_table[0].
-
+		frequency_table[0].frequency = frequency_table[h].frequency + frequency_table[f].frequency;
+		frequency_table[0].glyph = -1;
+		frequency_table[0].left = h;
+		frequency_table[0].right = f;
+		
 		// Reheap?
-
+		Reheap(frequency_table, h);
+		cout << "Reheaped after adding merge node...2" << endl;
+		for (int i = 0; i <= f; i++) {
+			cout << frequency_table[i].frequency << endl;
+		}
 		// Move H left and F right.
 		h--;
 		f++;
@@ -176,6 +205,38 @@ inline int MarkM(HuffTableEntry table[], const int slot_one, const int slot_two)
 	}
 	else {
 		return slot_two;
+	}
+}
+
+void Reheap(HuffTableEntry frequency_table[], int h)
+{
+	int index = 0;
+	HuffTableEntry temp;
+	//stop when CHILDREN get to H
+	int left = (index * 2) + 1;
+	int right = (index * 2) + 2;
+	while (left < h && right < h) {
+		
+		
+		//if not a min heap...
+		if (frequency_table[index].frequency > frequency_table[left].frequency)
+		{
+			//switch them
+			temp = frequency_table[index];
+			frequency_table[index] = frequency_table[left];
+			frequency_table[left] = temp;
+		}
+		//if still not a min heap...
+		if (frequency_table[index].frequency > frequency_table[right].frequency) 
+		{
+			//switch them
+			temp = frequency_table[index];
+			frequency_table[index] = frequency_table[right];
+			frequency_table[right] = temp;
+		}
+		index++;
+		left = (index * 2) + 1;
+		right = (index * 2) + 2;
 	}
 }
 
