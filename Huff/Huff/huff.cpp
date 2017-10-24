@@ -211,7 +211,7 @@ inline int MarkM(HuffTableEntry table[], const int slot_one, const int slot_two)
 void Reheap(HuffTableEntry frequency_table[], int m, int h)
 {
 	// A min heap is when the parent is less than or equal to its children.
-	int head = 0;
+	int head = (m-1)/2;
 	int left_child = (m * 2) + 1;
 	int right_child = (m * 2) + 2;
 	// Check to see if the marked node m is >= h || if h == 1 This is our base case
