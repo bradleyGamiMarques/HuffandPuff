@@ -11,7 +11,7 @@ using std::ios;
 using std::map;
 using std::pair;
 using std::string;
-using std::vector;
+using std::swap;
 
 // Functions taken from: https://stackoverflow.com/questions/25706991/appending-a-file-extension-in-a-c-progam
 bool EndsWith(string const &, string const);
@@ -34,7 +34,7 @@ struct StoredHuffTableEntry {
 void BubbleSort(int, HuffTableEntry[]);
 void CreateHuffmanTable(HuffTableEntry[], int);
 int MarkM(HuffTableEntry[], const int, const int);
-void Reheap(HuffTableEntry[], int);
+void Reheap(HuffTableEntry[], int, int);
 
 void main() {
 	int length_of_file_name;
@@ -55,18 +55,18 @@ void main() {
 	map<char, int> frequency_map;
 	string input;
 	getline(fin, input);
-	for(char c: input) {
+	for (char c : input) {
 		auto iter = frequency_map.find(c);
 		if (iter == frequency_map.end()) {
 			// Didn't find the char in the map so we need to insert it into the map.
-			frequency_map.insert(pair<char, int>(c,1));
+			frequency_map.insert(pair<char, int>(c, 1));
 		}
 		else {
 			// We found it so increment it in the map frequency_table
 			frequency_map[c]++;
 		}
 	}
-	
+
 	/// TODO: Do the sorting stuff, and get the huffman table
 	HuffTableEntry frequency_table[513];
 	int index = 0;
@@ -172,7 +172,7 @@ void CreateHuffmanTable(HuffTableEntry frequency_table[], int length)
 		}
 
 		// Reheap?
-		Reheap(frequency_table, h);
+		Reheap(frequency_table, m, h);
 		cout << "Reheaped...1" << endl;
 		for (int i = 0; i <= f; i++) {
 			cout << frequency_table[i].frequency << endl;
@@ -185,9 +185,9 @@ void CreateHuffmanTable(HuffTableEntry frequency_table[], int length)
 		frequency_table[0].glyph = -1;
 		frequency_table[0].left = h;
 		frequency_table[0].right = f;
-		
+
 		// Reheap?
-		Reheap(frequency_table, h);
+		Reheap(frequency_table, m, h);
 		cout << "Reheaped after adding merge node...2" << endl;
 		for (int i = 0; i <= f; i++) {
 			cout << frequency_table[i].frequency << endl;
@@ -208,35 +208,64 @@ inline int MarkM(HuffTableEntry table[], const int slot_one, const int slot_two)
 	}
 }
 
-void Reheap(HuffTableEntry frequency_table[], int h)
+void Reheap(HuffTableEntry frequency_table[], int m, int h)
 {
-	int index = 0;
-	HuffTableEntry temp;
-	//stop when CHILDREN get to H
-	int left = (index * 2) + 1;
-	int right = (index * 2) + 2;
-	while (left < h && right < h) {
-		
-		
-		//if not a min heap...
-		if (frequency_table[index].frequency > frequency_table[left].frequency)
-		{
-			//switch them
-			temp = frequency_table[index];
-			frequency_table[index] = frequency_table[left];
-			frequency_table[left] = temp;
-		}
-		//if still not a min heap...
-		if (frequency_table[index].frequency > frequency_table[right].frequency) 
-		{
-			//switch them
-			temp = frequency_table[index];
-			frequency_table[index] = frequency_table[right];
-			frequency_table[right] = temp;
-		}
-		index++;
-		left = (index * 2) + 1;
-		right = (index * 2) + 2;
+	// A min heap is when the parent is less than or equal to its children.
+	int head = 0;
+	int left_child = (m * 2) + 1;
+	int right_child = (m * 2) + 2;
+	// Check to see if the marked node m is >= h || if h == 1 This is our base case
+	if (m >= h || h == 1) {
+		// Do nothing! We're done!
+		return;
 	}
+	// The goal of this statement is to get the largest frequency node into slot 0.
+	if (frequency_table[head].frequency > frequency_table[m].frequency) {
+		swap(frequency_table[head], frequency_table[m]);
+		// We need to reheap because the largest node is not at slot 0.
+		if (m != 0) {
+			Reheap(frequency_table, head, h);
+		}
+	}
+	else {
+		// If not a min heap...
+		// Check to see if the right child is not past the heap.
+		// This is one of the ways we check to see if we need to stop.
+		if (right_child < h) {
+			// If we go into this statement we do not have a min heap.
+			// Because both of the children are greater than the parent.
+			if (frequency_table[m].frequency > frequency_table[left_child].frequency &&
+				frequency_table[m].frequency > frequency_table[right_child].frequency) {
+				// Compare the left child to the right child.
+				if (frequency_table[left_child].frequency <= frequency_table[right_child].frequency) {
+					// Swap the parent with the left child.
+					swap(frequency_table[m], frequency_table[left_child]);
+					Reheap(frequency_table, left_child, h);
+				}
+				else {
+					// Swap the parent with the right child.
+					swap(frequency_table[m], frequency_table[right_child]);
+					Reheap(frequency_table, right_child, h);
+				}
+			}
+			// If we go into this statement we do not have a min heap.
+			// Because one of the children are greater than the parent.
+			else if (frequency_table[m].frequency > frequency_table[left_child].frequency ||
+				frequency_table[m].frequency > frequency_table[right_child].frequency) {
+				// Figure out which one of the children is the smallest.
+				// We have a function which does that for us MarkM().
+				int minimum = MarkM(frequency_table, left_child, right_child);
+				swap(frequency_table[m], frequency_table[minimum]);
+				Reheap(frequency_table, minimum, h);
+			}
+		}
+		// If the right child was past the heap we should check and see if
+		// the left child is past the heap.
+		else if (left_child < h) {
+			if (frequency_table[m].frequency > frequency_table[left_child].frequency) {
+				swap(frequency_table[m], frequency_table[left_child]);
+			}
+		}
+	}	
 }
 
