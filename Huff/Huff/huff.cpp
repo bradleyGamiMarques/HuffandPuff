@@ -33,7 +33,7 @@ struct StoredHuffTableEntry {
 
 void BubbleSort(int, HuffTableEntry[]);
 void CreateHuffmanTable(HuffTableEntry[], int);
-void GetCodes();
+void GetCodes(HuffTableEntry frequency_table[], HuffTableEntry node, string direction, string code);
 int MarkM(HuffTableEntry[], const int, const int);
 void Reheap(HuffTableEntry[], int, int);
 
@@ -82,7 +82,9 @@ void main() {
 
 	//generate Huffman codes
 	string codes[257];
-	
+	for (int i = 0; i < length; i++) {
+		GetCodes(frequency_table, frequency_table[i], "", "");
+	}
 
 }
 inline bool EndsWith(string const & str, string const file_extension) {
@@ -262,7 +264,26 @@ void Reheap(HuffTableEntry frequency_table[], int m, int h)
 	}
 }
 
-void GetCodes() {
-	//depth first search
+void GetCodes(HuffTableEntry frequency_table[], HuffTableEntry node, string direction, string code) {
+	//depth first search, recursive
+	//add a '1' to code string if go right, and add a '0' if go left
 
+	if (node.glyph != -1) {
+		//it's a frequency node
+		if (direction == "left") {
+			code.append("0");
+		}
+		else if (direction == "right") {
+			code.append("1");
+		}
+	}
+	else {
+		//it's a merge node
+		if (node.left != -1) {
+			GetCodes(frequency_table, frequency_table[node.left], "left", code);
+		}
+		if (node.right != -1) {
+			GetCodes(frequency_table, frequency_table[node.right], "right", code);
+		}
+	}
 }
