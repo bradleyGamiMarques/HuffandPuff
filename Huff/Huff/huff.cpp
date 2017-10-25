@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <vector>
+//#define DEBUG
 using std::cin;
 using std::cout;
 using std::endl;
@@ -78,11 +79,15 @@ void main() {
 		index++;
 	}
 	// Add in the end of file character.
+	// For debugging purposes I have removed the end of file character from our
+	// frequency_table. Remove the preprocessor directive before submitting assignment.
+#ifndef DEBUG
 	frequency_table[index].glyph = 256;
 	frequency_table[index].left = -1;
 	frequency_table[index].right = -1;
 	frequency_table[index].frequency = 1;
-	int length = index + 1;
+#endif // !DEBUG
+	int length = index;
 	// Sort the frequency table.
 	BubbleSort(length, frequency_table);
 
@@ -154,48 +159,47 @@ void CreateHuffmanTable(HuffTableEntry frequency_table[], int length)
 	int h = length - 1;
 	int f = length;
 	int m;
+
 	do {
-		// Mark m.
+		// Choose the smaller frequency out of slots 1 and 2.
 		if (h >= 2) {
 			m = MarkM(frequency_table, 1, 2);
 		}
+		// Choose the left one if slot 2 is past the heap.
 		else if (h >= 1) {
-			m = 1; // If we've reached this point always choose the left.
+			m = 1;
 		}
-		// Move frequency_table[m] to frequency_table[f].
-		frequency_table[f] = frequency_table[m];
-		// Move frequency_table[h] to frequency_table[m].
-		frequency_table[m] = frequency_table[h];
-
-		for (int i = 0; i <= f; i++) {
-			cout << frequency_table[i].frequency << endl;
+		// Move m to f.
+		std::swap(frequency_table[m], frequency_table[f]);
+		if (m < h) {
+			// Move h to m.
+			std::swap(frequency_table[m], frequency_table[h]);
 		}
-
 		// Reheap?
 		Reheap(frequency_table, m, h);
-		cout << "Reheaped...1" << endl;
-		for (int i = 0; i <= f; i++) {
-			cout << frequency_table[i].frequency << endl;
-		}
+		// Move slot 0 to h.
+		std::swap(frequency_table[0], frequency_table[h]);
 
-		// Move frequency_table[0] to frequency_table[h].
-		frequency_table[h] = frequency_table[0];
-		// Create a merge frequency node at frequency_table[0].
-		frequency_table[0].frequency = frequency_table[h].frequency + frequency_table[f].frequency;
+		// Create a new frequency node
 		frequency_table[0].glyph = -1;
+		frequency_table[0].frequency = frequency_table[h].frequency + frequency_table[f].frequency;
 		frequency_table[0].left = h;
 		frequency_table[0].right = f;
-
 		// Reheap?
-		Reheap(frequency_table, m, h);
-		cout << "Reheaped after adding merge node...2" << endl;
-		for (int i = 0; i <= f; i++) {
-			cout << frequency_table[i].frequency << endl;
-		}
-		// Move H left and F right.
+		Reheap(frequency_table, 0, h);
+		// Move h left.
 		h--;
+		// Move f right.
 		f++;
-	} while (f != 2 * length - 1);
+	} while (f != 2 * length - 1); // You will have (2* number of entries in table) - 1 merge nodes.
+// Commenting out line 6 will prevent this code from executing. It's a neat trick I learned in
+// Dr. Baber's Applied Algorithms class.
+#ifdef DEBUG
+	cout << "The Huffman table is:" << endl;
+	for (int index = 0; index < (2 * length) - 1; index++) {
+		cout << frequency_table[index].frequency << endl;
+	}
+#endif
 }
 
 inline int MarkM(HuffTableEntry table[], const int slot_one, const int slot_two)
@@ -238,12 +242,13 @@ void Reheap(HuffTableEntry frequency_table[], int m, int h)
 				frequency_table[m].frequency > frequency_table[right_child].frequency) {
 				// Compare the left child to the right child.
 				if (frequency_table[left_child].frequency <= frequency_table[right_child].frequency) {
-					// Swap the parent with the left child.
+					// Swap the parent with the left_child because it was
+					// smaller than the right_child
 					swap(frequency_table[m], frequency_table[left_child]);
 					Reheap(frequency_table, left_child, h);
 				}
 				else {
-					// Swap the parent with the right child.
+					// Swap the parent with the right_child.
 					swap(frequency_table[m], frequency_table[right_child]);
 					Reheap(frequency_table, right_child, h);
 				}
