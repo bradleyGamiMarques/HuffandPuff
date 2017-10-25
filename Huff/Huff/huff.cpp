@@ -3,7 +3,6 @@
 #include <map>
 #include <string>
 #include <vector>
-//#define DEBUG
 using std::cin;
 using std::cout;
 using std::endl;
@@ -34,6 +33,7 @@ struct StoredHuffTableEntry {
 
 void BubbleSort(int, HuffTableEntry[]);
 void CreateHuffmanTable(HuffTableEntry[], int);
+void GetCodes();
 int MarkM(HuffTableEntry[], const int, const int);
 void Reheap(HuffTableEntry[], int, int);
 
@@ -51,42 +51,26 @@ void main() {
 	AppendFileExtension(output_file_name, ".huf");
 
 
-	/// TODO: Create a frequency table
-	// type char is the glyph and type int is the frequency of the glyph.
-	map<char, int> frequency_map;
-	string input;
-	getline(fin, input);
-	for (char c : input) {
-		auto iter = frequency_map.find(c);
-		if (iter == frequency_map.end()) {
-			// Didn't find the char in the map so we need to insert it into the map.
-			frequency_map.insert(pair<char, int>(c, 1));
-		}
-		else {
-			// We found it so increment it in the map frequency_table
-			frequency_map[c]++;
-		}
+	//Create a frequency table
+	long long glyph_frequency[257] = {0};
+	char input[1];
+	while (fin.read(input, 1)) {
+		glyph_frequency[input[0]]++;
 	}
+	glyph_frequency[256] = 1; // End of file frequency.
 
-	/// TODO: Do the sorting stuff, and get the huffman table
+	// Do the sorting stuff, and get the huffman table
 	HuffTableEntry frequency_table[513];
 	int index = 0;
-	for (map<char, int>::iterator iter = frequency_map.begin(); iter != frequency_map.end(); ++iter) {
-		frequency_table[index].glyph = iter->first;
-		frequency_table[index].left = -1;
-		frequency_table[index].right = -1;
-		frequency_table[index].frequency = iter->second;
-		index++;
+	for (int i = 0; i < 257; i++) {
+		if (glyph_frequency[i] != 0) {
+			frequency_table[index].glyph = i;
+			frequency_table[index].frequency = glyph_frequency[i];
+			frequency_table[index].left = -1;
+			frequency_table[index].right = -1;
+			index++;
+		}
 	}
-	// Add in the end of file character.
-	// For debugging purposes I have removed the end of file character from our
-	// frequency_table. Remove the preprocessor directive before submitting assignment.
-#ifndef DEBUG
-	frequency_table[index].glyph = 256;
-	frequency_table[index].left = -1;
-	frequency_table[index].right = -1;
-	frequency_table[index].frequency = 1;
-#endif // !DEBUG
 	int length = index;
 	// Sort the frequency table.
 	BubbleSort(length, frequency_table);
@@ -95,6 +79,11 @@ void main() {
 	CreateHuffmanTable(frequency_table, length);
 
 	/// TODO: Write all the header stuff to the file, and encode the data.
+
+	//generate Huffman codes
+	string codes[257];
+	
+
 }
 inline bool EndsWith(string const & str, string const file_extension) {
 	bool flag = false;
@@ -107,6 +96,7 @@ inline bool EndsWith(string const & str, string const file_extension) {
 		0,
 		file_extension.size());
 }
+
 /* Name: AppendFileExtension
 Inputs: input_file_name - A string passed by reference that contains the
 the name of the file including the file extension.
@@ -165,41 +155,39 @@ void CreateHuffmanTable(HuffTableEntry frequency_table[], int length)
 		if (h >= 2) {
 			m = MarkM(frequency_table, 1, 2);
 		}
-		// Choose the left one if slot 2 is past the heap.
+		// Choose the left one if slot 2 is equal to the heap or if slot 2 past the heap.
 		else if (h >= 1) {
 			m = 1;
 		}
+
 		// Move m to f.
-		std::swap(frequency_table[m], frequency_table[f]);
+		swap(frequency_table[m], frequency_table[f]);
+
 		if (m < h) {
 			// Move h to m.
-			std::swap(frequency_table[m], frequency_table[h]);
+			swap(frequency_table[m], frequency_table[h]);
 		}
 		// Reheap?
 		Reheap(frequency_table, m, h);
+
 		// Move slot 0 to h.
-		std::swap(frequency_table[0], frequency_table[h]);
+		swap(frequency_table[0], frequency_table[h]);
 
 		// Create a new frequency node
 		frequency_table[0].glyph = -1;
 		frequency_table[0].frequency = frequency_table[h].frequency + frequency_table[f].frequency;
 		frequency_table[0].left = h;
 		frequency_table[0].right = f;
+
 		// Reheap?
 		Reheap(frequency_table, 0, h);
+
 		// Move h left.
 		h--;
 		// Move f right.
 		f++;
 	} while (f != 2 * length - 1); // You will have (2* number of entries in table) - 1 merge nodes.
-// Commenting out line 6 will prevent this code from executing. It's a neat trick I learned in
-// Dr. Baber's Applied Algorithms class.
-#ifdef DEBUG
-	cout << "The Huffman table is:" << endl;
-	for (int index = 0; index < (2 * length) - 1; index++) {
-		cout << frequency_table[index].frequency << endl;
-	}
-#endif
+
 }
 
 inline int MarkM(HuffTableEntry table[], const int slot_one, const int slot_two)
@@ -215,7 +203,7 @@ inline int MarkM(HuffTableEntry table[], const int slot_one, const int slot_two)
 void Reheap(HuffTableEntry frequency_table[], int m, int h)
 {
 	// A min heap is when the parent is less than or equal to its children.
-	int head = (m-1)/2;
+	int head = (m - 1) / 2;
 	int left_child = (m * 2) + 1;
 	int right_child = (m * 2) + 2;
 	// Check to see if the marked node m is >= h || if h == 1 This is our base case
@@ -271,6 +259,10 @@ void Reheap(HuffTableEntry frequency_table[], int m, int h)
 				swap(frequency_table[m], frequency_table[left_child]);
 			}
 		}
-	}	
+	}
 }
 
+void GetCodes() {
+	//depth first search
+
+}
