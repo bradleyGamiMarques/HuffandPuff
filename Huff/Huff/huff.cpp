@@ -87,6 +87,33 @@ void main() {
 
 	/// TODO: encode the data. and write it out
 
+	// get length of file:
+	fin.seekg(0, fin.end);
+	int length = fin.tellg();
+	fin.seekg(0, fin.beg);
+
+	char * buffer = new char[length];
+
+	std::cout << "Reading " << length << " characters... ";
+	// read data as a block:
+	fin.read(buffer, length);
+
+	if (fin) {
+		std::cout << "all characters read successfully.";
+	}
+	else {
+		std::cout << "error: only " << fin.gcount() << " could be read";
+	}
+	fin.close();
+
+	// ...buffer contains the entire file...
+
+	//for each byte
+	for (int i = 0; i < length; i++) {
+		//encode the data, write it out 1 byte at a time
+
+	}
+
 }
 
 inline bool EndsWith(string const & str, string const file_extension) {
