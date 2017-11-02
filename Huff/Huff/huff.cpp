@@ -94,11 +94,13 @@ void main() {
 	fin.clear();
 	fin.seekg(0, fin.beg);
 
-	char inputbyte[1];
-	while (fin.read(inputbyte, 1)) {
-		string code = bitcodes[inputbyte[0]];
+	char inputByte[1];
+	unsigned char outputByte;
+	while (fin.read(inputByte, 1)) {
+		string code = bitcodes[inputByte[0]];
+		
 		//encode the byte, write it out one byte at a time
-
+		
 	}
 
 
