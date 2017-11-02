@@ -16,9 +16,9 @@ using std::swap;
 // Functions taken from: https://stackoverflow.com/questions/25706991/appending-a-file-extension-in-a-c-progam
 bool EndsWith(string const &, string const);
 void AppendFileExtension(string & str, string const suffix);
-
 // Function taken from: https://stackoverflow.com/questions/6417817/easy-way-to-remove-extension-from-a-filename
 string RemoveFileExtension(const string& filename);
+
 struct HuffTableEntry {
 	int glyph;
 	int left;
@@ -33,7 +33,7 @@ struct StoredHuffTableEntry {
 
 void BubbleSort(int, HuffTableEntry[]);
 void CreateHuffmanTable(HuffTableEntry[], int);
-void GetCodes(HuffTableEntry frequency_table[], HuffTableEntry node, string direction, string code, string codes[]);
+void GetCodes(HuffTableEntry frequency_table[], HuffTableEntry node, string& direction, string& code, string codes[]);
 int MarkM(HuffTableEntry[], const int, const int);
 void Reheap(HuffTableEntry[], int, int);
 
@@ -78,15 +78,17 @@ void main() {
 	//create the huffmantable
 	CreateHuffmanTable(frequency_table, length);
 
+	//generate Huffman codes
+	string bitcodes[257] = { "" };
+	string code = "";
+	string direction = "";
+	GetCodes(frequency_table, frequency_table[0], direction, code, bitcodes);
+
 	/// TODO: Write all the header stuff to the file, and encode the data.
 
-	//generate Huffman codes
-	string codes[257] = { "" };
-	for (int i = 0; i < length; i++) {
-		GetCodes(frequency_table, frequency_table[i], "", "", codes);
-	}
 
 }
+
 inline bool EndsWith(string const & str, string const file_extension) {
 	bool flag = false;
 	if (str.size() < file_extension.size()) {
@@ -264,27 +266,27 @@ void Reheap(HuffTableEntry frequency_table[], int m, int h)
 	}
 }
 
-void GetCodes(HuffTableEntry frequency_table[], HuffTableEntry node, string direction, string code, string codes[]) {
+inline void GetCodes(HuffTableEntry frequency_table[], HuffTableEntry node, string& direction, string& code, string bitcodes[]) {
 	//depth first search, recursive
 	//add a '1' to code string if go right, and add a '0' if go left
 
 	if (node.glyph != -1) {
 		//it's a frequency node
-		if (direction == "left") {
-			code.append("0");
-		}
-		else if (direction == "right") {
-			code.append("1");
-		}
-		codes[node.glyph] = code;
+		bitcodes[node.glyph] = code;
 	}
 	else {
 		//it's a merge node
 		if (node.left != -1) {
-			GetCodes(frequency_table, frequency_table[node.left], "left", code);
+			code.append("0");
+			string left = "left";
+			GetCodes(frequency_table, frequency_table[node.left], left, code, bitcodes);
+			code.erase(code.size() - 1, 1);
 		}
 		if (node.right != -1) {
-			GetCodes(frequency_table, frequency_table[node.right], "right", code);
+			code.append("1");
+			string right = "right";
+			GetCodes(frequency_table, frequency_table[node.right], right, code, bitcodes);
+			code.erase(code.size() - 1, 1);
 		}
 	}
 }
