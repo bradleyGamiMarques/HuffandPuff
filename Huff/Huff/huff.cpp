@@ -1,15 +1,12 @@
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <string>
-#include <vector>
 using std::cin;
 using std::cout;
 using std::endl;
 using std::ifstream;
+using std::ofstream;
 using std::ios;
-using std::map;
-using std::pair;
 using std::string;
 using std::swap;
 
@@ -25,15 +22,10 @@ struct HuffTableEntry {
 	int right;
 	int frequency;
 };
-struct StoredHuffTableEntry {
-	int glyph;
-	int left;
-	int right;
-};
 
 void BubbleSort(int, HuffTableEntry[]);
 void CreateHuffmanTable(HuffTableEntry[], int);
-void GetCodes(HuffTableEntry frequency_table[], HuffTableEntry node, string& direction, string& code, string codes[]);
+void GetCodes(HuffTableEntry frequency_table[], HuffTableEntry node, string& code, string codes[]);
 int MarkM(HuffTableEntry[], const int, const int);
 void Reheap(HuffTableEntry[], int, int);
 
@@ -49,7 +41,7 @@ void main() {
 	// Coach said that we can assume that the file exists. For that reason
 	// I haven't written the code to check if the file does not exist.
 	AppendFileExtension(output_file_name, ".huf");
-
+	ofstream out(output_file_name, ios::binary);
 
 	//Create a frequency table
 	long long glyph_frequency[257] = {0};
@@ -81,11 +73,19 @@ void main() {
 	//generate Huffman codes
 	string bitcodes[257] = { "" };
 	string code = "";
-	string direction = "";
-	GetCodes(frequency_table, frequency_table[0], direction, code, bitcodes);
+	GetCodes(frequency_table, frequency_table[0], code, bitcodes);
 
-	/// TODO: Write all the header stuff to the file, and encode the data.
+	out.write((char *)length_of_file_name, sizeof(length_of_file_name));
+	out.write(input_file_name.c_str(), sizeof(input_file_name));
+	out.write((char *)length, sizeof(length));
 
+	for (int i = 0; i < length; i++) {
+		out.write((char *) frequency_table[i].glyph, sizeof(frequency_table[i].glyph));
+		out.write((char *)frequency_table[i].left, sizeof(frequency_table[i].left));
+		out.write((char *)frequency_table[i].right, sizeof(frequency_table[i].right));
+	}
+
+	/// TODO: encode the data. and write it out
 
 }
 
@@ -266,26 +266,24 @@ void Reheap(HuffTableEntry frequency_table[], int m, int h)
 	}
 }
 
-inline void GetCodes(HuffTableEntry frequency_table[], HuffTableEntry node, string& direction, string& code, string bitcodes[]) {
+inline void GetCodes(HuffTableEntry frequency_table[], HuffTableEntry node, string& code, string bitcodes[]) {
 	//depth first search, recursive
-	//add a '1' to code string if go right, and add a '0' if go left
 
 	if (node.glyph != -1) {
-		//it's a frequency node
+		//it's a frequency node, save the code into the array of bitcodes
 		bitcodes[node.glyph] = code;
 	}
 	else {
 		//it's a merge node
+		//add a '1' to code string if go right, and add a '0' if go left
 		if (node.left != -1) {
 			code.append("0");
-			string left = "left";
-			GetCodes(frequency_table, frequency_table[node.left], left, code, bitcodes);
+			GetCodes(frequency_table, frequency_table[node.left], code, bitcodes);
 			code.erase(code.size() - 1, 1);
 		}
 		if (node.right != -1) {
 			code.append("1");
-			string right = "right";
-			GetCodes(frequency_table, frequency_table[node.right], right, code, bitcodes);
+			GetCodes(frequency_table, frequency_table[node.right], code, bitcodes);
 			code.erase(code.size() - 1, 1);
 		}
 	}
