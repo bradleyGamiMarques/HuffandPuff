@@ -41,7 +41,7 @@ void main() {
 	// Coach said that we can assume that the file exists. For that reason
 	// I haven't written the code to check if the file does not exist.
 	AppendFileExtension(output_file_name, ".huf");
-	ofstream out(output_file_name, ios::binary);
+	ofstream out(output_file_name, ios::binary | ios::out);
 
 	//Create a frequency table
 	long long glyph_frequency[257] = {0};
@@ -75,45 +75,60 @@ void main() {
 	string code = "";
 	GetCodes(frequency_table, frequency_table[0], code, bitcodes);
 
-	out.write((char *)length_of_file_name, sizeof(length_of_file_name));
-	out.write(input_file_name.c_str(), sizeof(input_file_name));
-	out.write((char *)length, sizeof(length));
+	//write the header data (length of filename, filename, #huffman entries, huffman table)
+	int numEntries = (length * 2) - 1;
 
-	for (int i = 0; i < length; i++) {
-		out.write((char *) frequency_table[i].glyph, sizeof(frequency_table[i].glyph));
-		out.write((char *)frequency_table[i].left, sizeof(frequency_table[i].left));
-		out.write((char *)frequency_table[i].right, sizeof(frequency_table[i].right));
+	out.write((char *) &length_of_file_name, sizeof(length_of_file_name));
+	out.write(input_file_name.c_str(), length_of_file_name);
+	out.write((char *) &numEntries, sizeof(numEntries));
+
+	for (int i = 0; i < numEntries; i++) {
+		out.write((char *) &frequency_table[i].glyph, sizeof(frequency_table[i].glyph));
+		out.write((char *) &frequency_table[i].left, sizeof(frequency_table[i].left));
+		out.write((char *) &frequency_table[i].right, sizeof(frequency_table[i].right));
 	}
 
 	/// TODO: encode the data. and write it out
 
-	// get length of file:
-	fin.seekg(0, fin.end);
-	int length = fin.tellg();
+	//move back to the beginning of input file
+	fin.clear();
 	fin.seekg(0, fin.beg);
 
-	char * buffer = new char[length];
+	char inputbyte[1];
+	while (fin.read(inputbyte, 1)) {
+		string code = bitcodes[inputbyte[0]];
+		//encode the byte, write it out one byte at a time
 
-	std::cout << "Reading " << length << " characters... ";
-	// read data as a block:
-	fin.read(buffer, length);
+	}
 
-	if (fin) {
-		std::cout << "all characters read successfully.";
-	}
-	else {
-		std::cout << "error: only " << fin.gcount() << " could be read";
-	}
+
+	//// get length of file:
+	//fin.seekg(0, fin.end);
+	//int filelength = fin.tellg();
+	//fin.seekg(0, fin.beg);
+	//unsigned char * buffer = new unsigned char[filelength];
+	//std::cout << "Reading " << filelength << " characters... ";
+	//// read data as a block:
+	//fin.read((char *)buffer, filelength);
+	//if (fin) {
+	//	std::cout << "all characters read successfully.";
+	//}
+	//else {
+	//	std::cout << "error: only " << fin.gcount() << " could be read";
+	//}
+	//fin.close();
+	//// ...buffer contains the entire file...
+	////for each byte
+	//for (int i = 0; i < filelength; i++) {
+	//	//encode the data, write it out 1 byte at a time
+	//	string code = bitcodes[buffer[i]];
+	//	cout << "test";
+	//}
+
+
+	//close the files
 	fin.close();
-
-	// ...buffer contains the entire file...
-
-	//for each byte
-	for (int i = 0; i < length; i++) {
-		//encode the data, write it out 1 byte at a time
-
-	}
-
+	out.close();
 }
 
 inline bool EndsWith(string const & str, string const file_extension) {
