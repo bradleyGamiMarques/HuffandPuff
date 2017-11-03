@@ -1,14 +1,21 @@
+#include <cmath>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <string>
 using std::cin;
 using std::cout;
 using std::endl;
+using std::hex;
 using std::ifstream;
-using std::ofstream;
 using std::ios;
+using std::ofstream;
+using std::pow;
+using std::setfill;
+using std::setw;
 using std::string;
 using std::swap;
+using std::uppercase;
 
 // Functions taken from: https://stackoverflow.com/questions/25706991/appending-a-file-extension-in-a-c-progam
 bool EndsWith(string const &, string const);
@@ -95,38 +102,31 @@ void main() {
 	fin.seekg(0, fin.beg);
 
 	char inputByte[1];
-	unsigned char outputByte;
+	int bitstringLength;
+	int count = 0;
+	unsigned char output_byte ='\0';
 	while (fin.read(inputByte, 1)) {
-		string code = bitcodes[inputByte[0]];
-		
+		string bitstring = bitcodes[inputByte[0]];
 		//encode the byte, write it out one byte at a time
-		
+		bitstringLength = bitstring.length();
+		for (int i = 0; i < bitstringLength; i++) {
+			if (bitstring[i] == '1') {
+				output_byte = output_byte | (int)pow(2.0, count);
+			}
+			count++;
+			if (count == 8) {
+				//write the byte out to file
+				//out.write((char *) &output_byte, 1);
+				out << output_byte;
+				//reset the byte
+				output_byte = '\0';
+				count = 0;
+			}
+		}
+		//output value for testing
+		cout << "right to left encoding: " << endl;
+		cout << hex << setfill('0') << setw(2) << uppercase << int(output_byte) << endl;
 	}
-
-
-	//// get length of file:
-	//fin.seekg(0, fin.end);
-	//int filelength = fin.tellg();
-	//fin.seekg(0, fin.beg);
-	//unsigned char * buffer = new unsigned char[filelength];
-	//std::cout << "Reading " << filelength << " characters... ";
-	//// read data as a block:
-	//fin.read((char *)buffer, filelength);
-	//if (fin) {
-	//	std::cout << "all characters read successfully.";
-	//}
-	//else {
-	//	std::cout << "error: only " << fin.gcount() << " could be read";
-	//}
-	//fin.close();
-	//// ...buffer contains the entire file...
-	////for each byte
-	//for (int i = 0; i < filelength; i++) {
-	//	//encode the data, write it out 1 byte at a time
-	//	string code = bitcodes[buffer[i]];
-	//	cout << "test";
-	//}
-
 
 	//close the files
 	fin.close();
