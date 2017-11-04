@@ -101,15 +101,16 @@ void main() {
 	fin.clear();
 	fin.seekg(0, fin.beg);
 
-	char inputByte[1];
-	int bitstringLength;
+	int bitstring_length;
 	int count = 0;
-	unsigned char output_byte ='\0';
-	while (fin.read(inputByte, 1)) {
-		string bitstring = bitcodes[inputByte[0]];
+	string bitstring;
+	unsigned char input_byte[1];
+	unsigned char output_byte = '\0';
+	while (fin.read((char *)&input_byte, 1)) {
+	 bitstring = bitcodes[input_byte[0]];
 		//encode the byte, write it out one byte at a time
-		bitstringLength = bitstring.length();
-		for (int i = 0; i < bitstringLength; i++) {
+		bitstring_length = bitstring.length();
+		for (int i = 0; i < bitstring_length; i++) {
 			if (bitstring[i] == '1') {
 				output_byte = output_byte | (int)pow(2.0, count);
 			}
@@ -127,7 +128,27 @@ void main() {
 		cout << "right to left encoding: " << endl;
 		cout << hex << setfill('0') << setw(2) << uppercase << int(output_byte) << endl;
 	}
-
+	// We need to get the EOF glyph bitstring
+	bitstring = bitcodes[256];
+	bitstring_length = bitstring.length();
+	for (int i = 0; i < bitstring_length; i++) {
+		if (bitstring[i] == '1') {
+			output_byte = output_byte | (int)pow(2.0, count);
+		}
+		count++;
+		if (count == 8) {
+			//write the byte out to file
+			//out.write((char *) &output_byte, 1);
+			out << output_byte;
+			//reset the byte
+			output_byte = '\0';
+			count = 0;
+		}
+	}
+	out << output_byte;
+	//reset the byte
+	output_byte = '\0';
+	count = 0;
 	//close the files
 	fin.close();
 	out.close();
