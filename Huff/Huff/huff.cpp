@@ -124,9 +124,6 @@ void main() {
 				count = 0;
 			}
 		}
-		//output value for testing
-		cout << "right to left encoding: " << endl;
-		cout << hex << setfill('0') << setw(2) << uppercase << int(output_byte) << endl;
 	}
 	// We need to get the EOF glyph bitstring
 	bitstring = bitcodes[256];
