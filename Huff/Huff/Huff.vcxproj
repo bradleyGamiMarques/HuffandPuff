@@ -142,6 +142,8 @@
     <ClCompile Include="huff.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="letters-coach.huf" />
+    <None Include="letters.huf" />
     <None Include="test.huf" />
     <None Include="ttax.huf" />
   </ItemGroup>

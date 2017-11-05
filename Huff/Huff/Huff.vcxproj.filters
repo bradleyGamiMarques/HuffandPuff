@@ -26,5 +26,11 @@
     <None Include="ttax.huf">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="letters.huf">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="letters-coach.huf">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

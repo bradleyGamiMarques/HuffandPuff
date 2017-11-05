@@ -95,8 +95,6 @@ void main() {
 		out.write((char *) &frequency_table[i].right, sizeof(frequency_table[i].right));
 	}
 
-	/// TODO: encode the data. and write it out
-
 	//move back to the beginning of input file
 	fin.clear();
 	fin.seekg(0, fin.beg);
