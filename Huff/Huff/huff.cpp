@@ -30,7 +30,7 @@ struct HuffTableEntry {
 	int frequency;
 };
 
-void BubbleSort(int, HuffTableEntry[]);
+void BubbleSort(HuffTableEntry[], int);
 void CreateHuffmanTable(HuffTableEntry[], int);
 void GetCodes(HuffTableEntry frequency_table[], HuffTableEntry node, string& code, string codes[]);
 int MarkM(HuffTableEntry[], const int, const int);
@@ -72,7 +72,7 @@ void main() {
 	}
 	int length = index;
 	// Sort the frequency table.
-	BubbleSort(length, frequency_table);
+	BubbleSort(frequency_table, length);
 
 	//create the huffmantable
 	CreateHuffmanTable(frequency_table, length);
@@ -191,7 +191,7 @@ inline string RemoveFileExtension(const string & filename)
 	return filename.substr(0, last_dot);
 }
 
-void BubbleSort(int n, HuffTableEntry huff_table[])
+void BubbleSort(HuffTableEntry huff_table[],int n)
 {
 	bool did_swap = true;
 	int num_pairs = n;
