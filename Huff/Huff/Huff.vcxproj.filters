@@ -32,5 +32,11 @@
     <None Include="letters-coach.huf">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="links.huf">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="links-coach.huf">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

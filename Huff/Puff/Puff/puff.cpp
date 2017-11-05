@@ -1,3 +1,4 @@
+#include<cmath>
 #include<fstream>
 #include<iostream>
 #include<string>
@@ -24,11 +25,15 @@ void main() {
 	// Read the file name length
 	fin.read((char*)&length_of_filename, sizeof(length_of_filename));
 	//read the filename
-	string filename;
-	fin.read((char *)&filename, length_of_filename);
+	char* filename = new char[length_of_filename + 1];
+	fin.read(filename, length_of_filename);
+	filename[length_of_filename] = '\0';
 	// Read the # of Huffman Table entries
 	fin.read((char*)&number_of_huffman_entries, sizeof number_of_huffman_entries);
 	HuffTableEntry* huffman_tree = new HuffTableEntry[number_of_huffman_entries];
+
+	//create output file
+	ofstream fout(filename, ios::out);
 
 	//read the entries
 	for (int i = 0; i < number_of_huffman_entries; i++) {
@@ -40,5 +45,47 @@ void main() {
 	}
 
 	//decode the data
+	//read in data, start at root of tree, if bit is 0 go left, if 1 go right, 
+	//if get to glyph write it out and start back at root of tree for next bit
+	unsigned char inputbyte;
+	short bitpos = 0;
+	int tablepos = 0;
+	bool foundEOF = false;
 
+	fin.read((char*)&inputbyte, 1);
+
+	while (!foundEOF) {
+		if (huffman_tree[tablepos].glyph == -1) {
+			if (inputbyte & (short)pow(2.0, bitpos)) {
+				//it's a 1, go right
+				tablepos = huffman_tree[tablepos].right;
+			}
+			else {
+				//it's a 0, go left
+				tablepos = huffman_tree[tablepos].left;
+			}
+			bitpos++;
+			if (bitpos == 8) {
+				//read in a new byte
+				fin.read((char*)&inputbyte, 1);
+				bitpos = 0;
+			}
+		}
+		else if (huffman_tree[tablepos].glyph == 256) {
+			foundEOF = true;
+		}
+		else {
+			//it's a glyph, write it out and start back at root
+			fout << (char)huffman_tree[tablepos].glyph;
+			tablepos = 0;
+		}	
+	}
+
+	//close the files
+	fin.close();
+	fout.close();
+
+	//deallocate dynamic memory
+	delete filename;
+	delete huffman_tree;
 }

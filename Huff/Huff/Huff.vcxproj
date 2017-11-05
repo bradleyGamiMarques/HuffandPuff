@@ -144,6 +144,8 @@
   <ItemGroup>
     <None Include="letters-coach.huf" />
     <None Include="letters.huf" />
+    <None Include="links-coach.huf" />
+    <None Include="links.huf" />
     <None Include="test.huf" />
     <None Include="ttax.huf" />
   </ItemGroup>
