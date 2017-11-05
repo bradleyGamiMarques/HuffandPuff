@@ -23,5 +23,8 @@
     <None Include="test.huf">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="ttax.huf">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

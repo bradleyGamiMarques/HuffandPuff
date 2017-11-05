@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="test.huf" />
+    <None Include="ttax.huf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
