@@ -51,7 +51,7 @@ void main() {
 	ofstream out(output_file_name, ios::binary | ios::out);
 
 	//Create a frequency table
-	long long glyph_frequency[257] = {0};
+	int glyph_frequency[257] = {0};
 	char input[1];
 	while (fin.read(input, 1)) {
 		glyph_frequency[input[0]]++;
