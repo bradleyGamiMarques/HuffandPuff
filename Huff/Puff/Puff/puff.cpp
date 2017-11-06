@@ -64,6 +64,8 @@ void main() {
 				//it's a 0, go left
 				tablepos = huffman_tree[tablepos].left;
 			}
+
+			//go to the next byte
 			bitpos++;
 			if (bitpos == 8) {
 				//read in a new byte
@@ -72,11 +74,14 @@ void main() {
 			}
 		}
 		else if (huffman_tree[tablepos].glyph == 256) {
+			//found the end of the file, stop looping
 			foundEOF = true;
 		}
 		else {
 			//it's a glyph, write it out and start back at root
-			fout << (char)huffman_tree[tablepos].glyph;
+			if (huffman_tree[tablepos].glyph != 10) {
+				fout << (char)huffman_tree[tablepos].glyph;
+			}
 			tablepos = 0;
 		}	
 	}
