@@ -116,14 +116,13 @@ void main() {
 			if (count == 8) {
 				//write the byte out to file
 				out.write((char *)&output_byte, sizeof(output_byte));
-				//out << output_byte;
 				//reset the byte
 				output_byte = '\0';
 				count = 0;
 			}
 		}
 	}
-	// We need to get the EOF glyph bitstring
+	// We need to encode the EOF glyph bitstring
 	bitstring = bitcodes[256];
 	bitstring_length = bitstring.length();
 	for (int i = 0; i < bitstring_length; i++) {
@@ -134,16 +133,17 @@ void main() {
 		if (count == 8) {
 			//write the byte out to file
 			out.write((char *) &output_byte, sizeof(output_byte));
-			//out << output_byte;
 			//reset the byte
 			output_byte = '\0';
 			count = 0;
 		}
 	}
-	out.write((char *)&output_byte, sizeof(output_byte));
-	//reset the byte
-	output_byte = '\0';
-	count = 0;
+
+	if(count != 0){
+		//write out byte even if not full
+		out.write((char *)&output_byte, sizeof(output_byte));
+	}
+
 	//close the files
 	fin.close();
 	out.close();

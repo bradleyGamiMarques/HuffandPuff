@@ -141,6 +141,13 @@
   <ItemGroup>
     <ClCompile Include="puff.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="letters-c.txt" />
+    <Text Include="letters.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="letters.huf" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

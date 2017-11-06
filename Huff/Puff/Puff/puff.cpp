@@ -32,9 +32,6 @@ void main() {
 	fin.read((char*)&number_of_huffman_entries, sizeof number_of_huffman_entries);
 	HuffTableEntry* huffman_tree = new HuffTableEntry[number_of_huffman_entries];
 
-	//create output file
-	ofstream fout(filename, ios::out | ios::binary);
-
 	//read the entries
 	for (int i = 0; i < number_of_huffman_entries; i++) {
 		HuffTableEntry entry;
@@ -44,12 +41,14 @@ void main() {
 		huffman_tree[i].right = entry.right;
 	}
 
+	//create output file
+	ofstream fout(filename, ios::out | ios::binary);
+
 	//decode the data
 	//read in data, start at root of tree, if bit is 0 go left, if 1 go right, 
 	//if get to glyph write it out and start back at root of tree for next bit
 
-	//TODO: add glyphs to large decoded string and use .write to write out the whole string at the end instead of writing it out a char at a time
-	string large_decoded_string;
+	string large_decoded_string = "";
 	unsigned char inputbyte;
 	short bitpos = 0;
 	int tablepos = 0;
@@ -71,22 +70,22 @@ void main() {
 			//go to the next byte
 			bitpos++;
 			if (bitpos == 8) {
-				large_decoded_string.append(inputbyte, 8);
 				//read in a new byte
 				fin.read((char*)&inputbyte, sizeof(inputbyte));
 				bitpos = 0;
 			}
 		}
 		else if (huffman_tree[tablepos].glyph == 256) {
-			//found the end of the file, stop looping
+			//found the end of the file, stop looping, write out the big string
 			foundEOF = true;
+			fout.write((char *)&large_decoded_string, sizeof(large_decoded_string));
 		}
 		else {
 			//it's a glyph, append it to the large string and write out when done.
 			//if (huffman_tree[tablepos].glyph != 10) {
-			//fout << (char)huffman_tree[tablepos].glyph;
+			//	fout << (char)huffman_tree[tablepos].glyph;
 			//}
-			large_decoded_string += inputbyte;
+			large_decoded_string += (char)huffman_tree[tablepos].glyph;
 			tablepos = 0;
 		}	
 	}

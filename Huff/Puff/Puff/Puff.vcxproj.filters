@@ -19,4 +19,17 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="letters.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="letters-c.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="letters.huf">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
