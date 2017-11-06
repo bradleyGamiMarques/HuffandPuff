@@ -19,29 +19,4 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="test.huf">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="ttax.huf">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="letters.huf">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="letters-coach.huf">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="letters-c.huf">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="links-c.huf">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="letters.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-  </ItemGroup>
 </Project>

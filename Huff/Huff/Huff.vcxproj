@@ -141,17 +141,6 @@
   <ItemGroup>
     <ClCompile Include="huff.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="letters-c.huf" />
-    <None Include="letters-coach.huf" />
-    <None Include="letters.huf" />
-    <None Include="links-c.huf" />
-    <None Include="test.huf" />
-    <None Include="ttax.huf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="letters.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
