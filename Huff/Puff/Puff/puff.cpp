@@ -47,6 +47,9 @@ void main() {
 	//decode the data
 	//read in data, start at root of tree, if bit is 0 go left, if 1 go right, 
 	//if get to glyph write it out and start back at root of tree for next bit
+
+	//TODO: add glyphs to large decoded string and use .write to write out the whole string at the end instead of writing it out a char at a time
+
 	unsigned char inputbyte;
 	short bitpos = 0;
 	int tablepos = 0;
