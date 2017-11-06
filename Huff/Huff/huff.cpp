@@ -44,11 +44,11 @@ void main() {
 	getline(cin, input_file_name);
 	output_file_name = input_file_name;
 	length_of_file_name = input_file_name.length();
-	ifstream fin(input_file_name, ios::binary);
+	ifstream fin(input_file_name, ios::in | ios::binary);
 	// Coach said that we can assume that the file exists. For that reason
 	// I haven't written the code to check if the file does not exist.
 	AppendFileExtension(output_file_name, ".huf");
-	ofstream out(output_file_name, ios::binary | ios::out);
+	ofstream out(output_file_name, ios::out | ios::binary  );
 
 	//Create a frequency table
 	int glyph_frequency[257] = {0};
@@ -104,7 +104,7 @@ void main() {
 	string bitstring;
 	unsigned char input_byte[1];
 	unsigned char output_byte = '\0';
-	while (fin.read((char *)&input_byte, 1)) {
+	while (fin.read((char *)&input_byte, sizeof(output_byte))) {
 	 bitstring = bitcodes[input_byte[0]];
 		//encode the byte, write it out one byte at a time
 		bitstring_length = bitstring.length();
@@ -115,8 +115,8 @@ void main() {
 			count++;
 			if (count == 8) {
 				//write the byte out to file
-				//out.write((char *) &output_byte, 1);
-				out << output_byte;
+				out.write((char *)&output_byte, sizeof(output_byte));
+				//out << output_byte;
 				//reset the byte
 				output_byte = '\0';
 				count = 0;
@@ -133,14 +133,14 @@ void main() {
 		count++;
 		if (count == 8) {
 			//write the byte out to file
-			//out.write((char *) &output_byte, 1);
-			out << output_byte;
+			out.write((char *) &output_byte, sizeof(output_byte));
+			//out << output_byte;
 			//reset the byte
 			output_byte = '\0';
 			count = 0;
 		}
 	}
-	out << output_byte;
+	out.write((char *)&output_byte, sizeof(output_byte));
 	//reset the byte
 	output_byte = '\0';
 	count = 0;

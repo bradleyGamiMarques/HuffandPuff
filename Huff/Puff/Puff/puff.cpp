@@ -33,7 +33,7 @@ void main() {
 	HuffTableEntry* huffman_tree = new HuffTableEntry[number_of_huffman_entries];
 
 	//create output file
-	ofstream fout(filename, ios::out);
+	ofstream fout(filename, ios::out | ios::binary);
 
 	//read the entries
 	for (int i = 0; i < number_of_huffman_entries; i++) {
@@ -49,7 +49,7 @@ void main() {
 	//if get to glyph write it out and start back at root of tree for next bit
 
 	//TODO: add glyphs to large decoded string and use .write to write out the whole string at the end instead of writing it out a char at a time
-
+	string large_decoded_string;
 	unsigned char inputbyte;
 	short bitpos = 0;
 	int tablepos = 0;
