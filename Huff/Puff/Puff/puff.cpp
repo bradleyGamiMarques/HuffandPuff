@@ -55,7 +55,7 @@ void main() {
 	int tablepos = 0;
 	bool foundEOF = false;
 
-	fin.read((char*)&inputbyte, 1);
+	fin.read((char*)&inputbyte, sizeof(inputbyte));
 
 	while (!foundEOF) {
 		if (huffman_tree[tablepos].glyph == -1) {
@@ -71,8 +71,9 @@ void main() {
 			//go to the next byte
 			bitpos++;
 			if (bitpos == 8) {
+				large_decoded_string.append(inputbyte, 8);
 				//read in a new byte
-				fin.read((char*)&inputbyte, 1);
+				fin.read((char*)&inputbyte, sizeof(inputbyte));
 				bitpos = 0;
 			}
 		}
@@ -81,10 +82,11 @@ void main() {
 			foundEOF = true;
 		}
 		else {
-			//it's a glyph, write it out and start back at root
-			if (huffman_tree[tablepos].glyph != 10) {
-				fout << (char)huffman_tree[tablepos].glyph;
-			}
+			//it's a glyph, append it to the large string and write out when done.
+			//if (huffman_tree[tablepos].glyph != 10) {
+			//fout << (char)huffman_tree[tablepos].glyph;
+			//}
+			large_decoded_string += inputbyte;
 			tablepos = 0;
 		}	
 	}
