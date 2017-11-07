@@ -78,14 +78,10 @@ void main() {
 		else if (huffman_tree[tablepos].glyph == 256) {
 			//found the end of the file, stop looping, write out the big string
 			foundEOF = true;
-			//fout.write((char *) &large_decoded_string, large_decoded_string.size());
 			fout.write(large_decoded_string.c_str(), large_decoded_string.size());
 		}
 		else {
 			//it's a glyph, append it to the large string and write out when done.
-			//if (huffman_tree[tablepos].glyph != 10) {
-			//	fout << (char)huffman_tree[tablepos].glyph;
-			//}
 			large_decoded_string += (unsigned char)huffman_tree[tablepos].glyph;
 			tablepos = 0;
 		}	

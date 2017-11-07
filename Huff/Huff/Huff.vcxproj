@@ -141,6 +141,12 @@
   <ItemGroup>
     <ClCompile Include="huff.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ptw32-c.huf" />
+    <None Include="ptw32.huf" />
+    <None Include="ttax-c.huf" />
+    <None Include="ttax.huf" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

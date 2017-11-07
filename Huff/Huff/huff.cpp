@@ -13,6 +13,7 @@ using std::ofstream;
 using std::pow;
 using std::setfill;
 using std::setw;
+using std::streamsize;
 using std::string;
 using std::swap;
 using std::uppercase;
@@ -52,9 +53,9 @@ void main() {
 
 	//Create a frequency table
 	int glyph_frequency[257] = {0};
-	char input[1];
-	while (fin.read(input, 1)) {
-		glyph_frequency[input[0]]++;
+	unsigned char input;
+	while (fin.read((char*)&input, 1)) {
+		glyph_frequency[input]++;
 	}
 	glyph_frequency[256] = 1; // End of file frequency.
 

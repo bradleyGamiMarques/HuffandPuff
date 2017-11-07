@@ -19,4 +19,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ttax.huf">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="ttax-c.huf">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="ptw32.huf">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="ptw32-c.huf">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
